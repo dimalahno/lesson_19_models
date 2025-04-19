@@ -8,18 +8,18 @@ from django.core.validators import MinValueValidator
 
 class Category(models.Model):
     """
-    Model representing a category in the shop system.
+    Модель категории в системе магазина.
     
-    This model implements a hierarchical category structure where each category can have
-    a parent category and multiple subcategories. It is used for organizing products
-    in the shop into a tree-like structure.
+    Представляет иерархическую структуру категорий товаров, где каждая категория
+    может иметь родительскую категорию и подкатегории. Используется для
+    организации товаров по группам.
     
     Attributes:
-        name (CharField): The name of the category with maximum length of 256 characters.
-        description (TextField): Optional description of the category.
-        parent (ForeignKey): Reference to parent category, can be null for top-level categories.
-            Creates a self-referential relationship allowing hierarchical structure.
+        name (CharField): Название категории
+        description (TextField): Описание категории
+        parent (ForeignKey): Родительская категория (может быть пустой)
     """
+
     name = models.CharField(max_length=256, verbose_name='Название')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     parent = models.ForeignKey(
@@ -40,20 +40,22 @@ class Category(models.Model):
 
 class Product(models.Model):
     """
-    Model representing a product in the shop system.
-
-    This model stores information about products available in the shop,
-    including their details, pricing, inventory, and categorization.
-
+    Модель товара в системе магазина.
+    
+    Представляет товары, доступные для покупки в магазине. Хранит основную
+    информацию о товаре, включая название, описание, цену, количество на складе
+    и связь с категорией товара.
+    
     Attributes:
-        name (CharField): The name of the product.
-        description (TextField): Detailed description of the product.
-        price (DecimalField): Product price with decimal precision.
-        stock (IntegerField): Current quantity available in stock.
-        image (ImageField): Product image file, optional.
-        category (ForeignKey): Reference to the product's category.
-        created_at (DateTimeField): Timestamp of when the product was added.
+        name (CharField): Название товара
+        description (TextField): Описание товара
+        price (DecimalField): Цена товара
+        stock (IntegerField): Количество товара на складе
+        image (ImageField): Изображение товара
+        category (ForeignKey): Категория, к которой относится товар
+        created_at (DateTimeField): Дата и время добавления товара
     """
+
     name = models.CharField(max_length=256, verbose_name='Название')
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     price = models.DecimalField(
@@ -95,6 +97,18 @@ class Product(models.Model):
 
 
 class User(AbstractUser):
+    """
+    Модель пользователя в системе магазина.
+    
+    Расширяет стандартную модель пользователя Django дополнительными полями
+    для хранения контактной информации покупателя.
+    
+    Attributes:
+        email (EmailField): Уникальный email адрес пользователя
+        phone_number (CharField): Номер телефона пользователя
+        address (TextField): Адрес доставки пользователя
+    """
+
     email = models.EmailField(unique=True, verbose_name='Email')
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='Номер телефона')
     address = models.TextField(blank=True, null=True, verbose_name='Адрес')
@@ -107,6 +121,20 @@ class User(AbstractUser):
         return self.username
 
 class Order(models.Model):
+    """
+    Модель заказа в системе магазина.
+    
+    Хранит информацию о заказах пользователей, включая статус заказа,
+    общую стоимость и связь с пользователем. Используется для отслеживания
+    состояния заказа от момента создания до доставки.
+    
+    Attributes:
+        user (ForeignKey): Пользователь, создавший заказ
+        created_at (DateTimeField): Дата и время создания заказа
+        status (CharField): Текущий статус заказа
+        total_price (DecimalField): Общая стоимость заказа
+    """
+
     STATUS_CHOICES = [
         ('processing', 'В обработке'),
         ('shipping', 'Доставляется'),
@@ -135,6 +163,19 @@ class Order(models.Model):
         self.save()
 
 class OrderItem(models.Model):
+    """
+    Модель позиции заказа в системе магазина.
+    
+    Представляет отдельную позицию в заказе, связывая конкретный товар
+    с заказом и указывая его количество. Используется для хранения информации
+    о том, какие товары и в каком количестве входят в заказ.
+    
+    Attributes:
+        order (ForeignKey): Заказ, к которому относится позиция
+        product (ForeignKey): Товар в заказе
+        quantity (PositiveIntegerField): Количество единиц товара
+    """
+
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
