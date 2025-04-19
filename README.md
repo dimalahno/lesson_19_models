@@ -12,7 +12,7 @@
 
 ### 1. Клонирование репозитория
 ```sh
-git clone https://github.com/yourusername/eshop.git
+git clone https://github.com/dimalahno/lesson_19_models.git
 cd eshop
 ```
 
