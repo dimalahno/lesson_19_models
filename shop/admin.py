@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 
-from shop.models import Category, Product, User, OrderItem, Order, Review, CartItem, Cart
+from shop.models import Category, Product, OrderItem, Order, Review, CartItem, Cart
 
 
 @admin.register(Category)
@@ -16,13 +16,6 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'stock', 'category', 'created_at')
     list_filter = ('category',)
     search_fields = ('name', 'description')
-
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
-    model = User
-    fieldsets = BaseUserAdmin.fieldsets + (
-        ('Дополнительная информация', {'fields': ('phone_number', 'address')}),
-    )
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Успешная регистрация{% endblock %}
+
+{% block content %}
+    <div class="alert alert-success">
+        <h2>Поздравляем!</h2>
+        <p>Пользователь <strong>{{ username }}</strong> успешно зарегистрирован!</p>
+    </div>
+    <a href="{% url 'users:home' %}" class="btn btn-primary">Вернуться на главную</a>
+{% endblock %}
