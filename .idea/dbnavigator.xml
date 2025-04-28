@@ -31,7 +31,9 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="a73cafda-32b1-4798-bca6-f7d27c328899" object-ref="schemas/db/tables/users_customuser" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="a73cafda-32b1-4798-bca6-f7d27c328899" />
@@ -39,6 +41,9 @@
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="a73cafda-32b1-4798-bca6-f7d27c328899" dataset="db.shop_product" active-filter-id="cda90476-9e52-4d2d-8677-ad5ecd3cb821">
       <filter id="cda90476-9e52-4d2d-8677-ad5ecd3cb821" name="get_all_product" temporary="false" custom-name="true" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="a73cafda-32b1-4798-bca6-f7d27c328899" dataset="db.users_customuser" active-filter-id="f7da2157-3084-4696-a510-f1a0dcd5e5f9">
+      <filter id="f7da2157-3084-4696-a510-f1a0dcd5e5f9" name="getAll" temporary="false" custom-name="true" type="basic" join-type="AND" />
     </filter-actions>
     <filter-actions connection-id="a73cafda-32b1-4798-bca6-f7d27c328899" dataset="db.shop_category" active-filter-id="7eb0fbf2-efba-4a2a-8e71-80ca1f548097">
       <filter id="7eb0fbf2-efba-4a2a-8e71-80ca1f548097" name="GetAll" temporary="false" custom-name="true" type="basic" join-type="AND" />

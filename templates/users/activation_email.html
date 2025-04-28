@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <p>Привет, {{user.username}}!</p>
+    <p>Пожалуйста, подтвердите свою регистрацию, нажав на ссылку ниже:</p>
+
+    <p>
+        <a href="http://{{ domain }}{% url 'users:activate' uidb64=uidb64 token=token %}">Подтвердить аккаунт</a>
+    </p>
+
+    <p>Если вы не регистрировались, проигнорируйте это письмо.</p>
+</body>
+</html>
