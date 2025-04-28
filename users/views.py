@@ -1,10 +1,10 @@
-from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -78,18 +78,26 @@ def login_view(request):
     Авторизация пользователя
     """
     if request.method == "POST":
-        form = LoginForm(data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, f"Пользователь {user.username} успешно авторизован!")
-            return redirect("users:home")
-        else:
-            messages.error(request, "Неверный логин или пароль. Попробуйте снова.")
-    else:
-        form = LoginForm()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
 
-    return render(request, "users/login.html", {"form": form})
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    messages.success(request, f"Пользователь {user.username} успешно авторизован!")
+                    return redirect('users:home')
+                else:
+                    messages.error(request, 'Аккаунт не активирован. Пожалуйста, подтвердите почту.')
+            else:
+                messages.error(request, 'Неверное имя пользователя или пароль.')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'users/login.html', {'form': form})
 
 def send_message_view(request):
     """
