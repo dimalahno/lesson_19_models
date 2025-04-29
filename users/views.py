@@ -1,12 +1,15 @@
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
@@ -80,12 +83,14 @@ def login_view(request):
     """
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
+        print(form.is_valid())
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            print(username, password)
 
             user = authenticate(username=username, password=password)
-
+            print(user)
             if user is not None:
                 if user.is_active:
                     login(request, user)
@@ -125,3 +130,36 @@ def profile_view(request):
     else:
         form = ProfileForm(instance=request.user)
     return render(request, 'users/profile.html', {'form': form})
+
+@login_required
+def request_account_delete(request):
+    user = request.user
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    delete_url = request.build_absolute_uri(
+        reverse('users:confirm_account_delete', kwargs={'uidb64': uid, 'token': token})
+    )
+
+    send_mail(
+        subject="Подтверждение удаления аккаунта",
+        message=f"Для удаления аккаунта перейдите по ссылке:\n\n{delete_url}",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+    )
+
+    return render(request, 'users/delete_email_sent.html')
+
+def confirm_account_delete(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = CustomUser.objects.get(pk=uid)
+    except (CustomUser.DoesNotExist, ValueError):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.delete()
+        logout(request)
+        return render(request, 'users/account_deleted.html')
+    else:
+        return HttpResponse("Ссылка недействительна или уже использована.", status=400)

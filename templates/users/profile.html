@@ -1,11 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Личный кабинет{% endblock %}
+
 {% block content %}
-    <h2>Личный кабинет</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Сохранить</button>
-    </form>
-    <a href="{% url 'users:home' %}" class="btn btn-secondary">Вернуться на главную</a>
+<h2>Личный кабинет</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+
+<hr>
+
+<!-- Кнопка удаления аккаунта -->
+<form method="post" action="{% url 'users:request_account_delete' %}" style="margin-top: 1em;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить аккаунт? Подтверждение придет на email.')">
+        Удалить аккаунт
+    </button>
+</form>
+
+<br>
+<a href="{% url 'users:home' %}" class="btn btn-secondary">Вернуться на главную</a>
 {% endblock %}
