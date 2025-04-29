@@ -214,18 +214,19 @@ class Cart(models.Model):
     
     Attributes:
         user (OneToOneField): Пользователь, которому принадлежит корзина.
-        created_at (DateTimeField): Дата и время создания корзины.
+        Created_at (DateTimeField): Дата и время создания корзины.
     """
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
 
     def __str__(self):
-        return f'Корзина пользователя {self.user.username}'
+        return f"Cart #{self.id} (user={self.user}, session={self.session_key})"
 
 class CartItem(models.Model):
     """
@@ -242,7 +243,7 @@ class CartItem(models.Model):
     """
 
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
