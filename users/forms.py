@@ -46,4 +46,8 @@ class MessageForm(forms.ModelForm):
             raise forms.ValidationError("Сообщение не должно превышать 500 символов.")
 
         return text
-            
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ["username", "phone_number", "address", "email"]

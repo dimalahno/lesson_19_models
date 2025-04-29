@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
@@ -9,7 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from .forms import RegistrationForm, LoginForm, MessageForm
+from .forms import RegistrationForm, LoginForm, MessageForm, ProfileForm
 from .models import CustomUser
 
 
@@ -113,3 +114,14 @@ def send_message_view(request):
         form = MessageForm()
 
     return render(request, "users/send_message.html", {"form": form})
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('users:profile')
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(request, 'users/profile.html', {'form': form})
