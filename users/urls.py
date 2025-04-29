@@ -1,5 +1,6 @@
 from django.urls import path
 from users.views import home, register, login_view, send_message_view, activate
+from django.contrib.auth import views as auth_views
 
 app_name = 'users'
 
