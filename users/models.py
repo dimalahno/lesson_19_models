@@ -51,6 +51,18 @@ class CustomUser(AbstractUser):
 
 
 class Message(models.Model):
+    """
+    Модель для хранения сообщений от пользователей.
+    
+    Используется для обработки обратной связи и запросов от посетителей сайта.
+    
+    Attributes:
+        name (CharField): Имя отправителя сообщения
+        email (EmailField): Email адрес отправителя
+        text (TextField): Текст сообщения
+        created_at (DateTimeField): Дата и время создания сообщения
+    """
+
     name = models.CharField(max_length=100, verbose_name="Имя", blank=False, null=False)
     email = models.EmailField(verbose_name="Электронная почта", blank=False, null=False)
     text = models.TextField(max_length=500, verbose_name="Сообщение")

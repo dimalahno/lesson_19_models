@@ -122,6 +122,9 @@ def send_message_view(request):
 
 @login_required
 def profile_view(request):
+    """
+    Личный кабинет пользователя
+    """
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -133,6 +136,11 @@ def profile_view(request):
 
 @login_required
 def request_account_delete(request):
+    """
+    Запрос на удаление аккаунта пользователя.
+    Генерирует токен для подтверждения удаления и отправляет его на email пользователя.
+    """
+
     user = request.user
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -151,6 +159,12 @@ def request_account_delete(request):
     return render(request, 'users/delete_email_sent.html')
 
 def confirm_account_delete(request, uidb64, token):
+    """
+    Подтверждение удаления аккаунта пользователя.
+    Проверяет валидность токена, полученного по email,
+    и если токен действителен - удаляет аккаунт пользователя.
+    """
+
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = CustomUser.objects.get(pk=uid)
